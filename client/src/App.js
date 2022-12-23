@@ -1,15 +1,11 @@
-
-
-
-
+import Message from './components/Message'
 
 function App() {
   return (
-    <div >
-
-
+    <div>
+      <Message />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
