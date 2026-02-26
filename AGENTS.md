@@ -24,11 +24,23 @@ This is a Socket.IO real-time chat application with two services (no root `packa
 
 ### Environment variables
 
+See `server/.env.example` for all server env vars. Key ones:
+
+- `ENCRYPTION_KEY` — **required** — 64 hex chars (32 bytes) for AES-256-GCM field encryption. Generate with: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+- `MONGO_URI` — MongoDB connection string (default: `mongodb://admin:chatpass123@localhost:27017/chat_app?authSource=admin`)
+- `JWT_SECRET` — JWT signing secret
 - `PORT` — server port (default: `5000`)
-- `CLIENT_ORIGIN` — CORS origin for the server (default: `*`)
+- `CLIENT_ORIGIN` — CORS origin (default: `*`)
 - `REACT_APP_SOCKET_URL` — client's WebSocket target (default: `http://localhost:5000`)
+
+### MongoDB
+
+- MongoDB 7 runs via Docker: `sudo docker start mongodb` (container already created).
+- If the container doesn't exist, create it: `sudo docker run -d --name mongodb -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=chatpass123 mongo:7`
+- Docker daemon must be running first: `sudo dockerd &>/tmp/dockerd.log &`
+- User data is encrypted at the application level (AES-256-GCM for email/displayName, bcrypt for passwords). See `server/crypto.js` and `server/models/User.js`.
 
 ### Notes
 
-- No database or external services required — all state is in-memory.
-- The server has no `package-lock.json`; only the client has one.
+- Chat messages remain in-memory (not persisted to DB).
+- User API: `POST /api/users/register`, `POST /api/users/login`, `GET /api/users/me` (auth), `GET /api/users`.
